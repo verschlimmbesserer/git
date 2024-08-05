@@ -1,0 +1,14 @@
+---
+
+- name: Check if git is installed
+  ansible.builtin.stat:
+    path: /usr/local/bin/git
+  register: git
+
+- name: Clone repo/repos
+  ansible.builtin.git:
+    repo: "{{ item.repo }}"
+    dest: "{{ item.dest }}"
+    version: "{{ item.version | default(omit) }}"
+  loop: "{{ git_repositories | flatten(levels=1) }}"
+  when: git.stat.exists
